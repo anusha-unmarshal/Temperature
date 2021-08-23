@@ -4,4 +4,8 @@ export class ParkingLot {
     park(vehicle) {
         return this.parking.push(vehicle);
     }
+
+    unpark() {
+
+    }
 }
