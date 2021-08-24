@@ -128,7 +128,6 @@ describe("Parking lot", () => {
     test("Notify the attendant when lot is full", () => {
         const parkingLot = new ParkingLot(1, []);
         const attendant = new Attendant(parkingLot);
-        parkingLot.addSubscriber(attendant);
         const vehicle = new Vehicle();
 
         parkingLot.park(vehicle);
@@ -139,7 +138,6 @@ describe("Parking lot", () => {
     test("Notify attendant when parking slot is available", () => {
         const parkingLot = new ParkingLot(1, []);
         const attendant = new Attendant(parkingLot);
-        parkingLot.addSubscriber(attendant);
         const vehicle = new Vehicle();
 
         parkingLot.park(vehicle);
@@ -148,4 +146,15 @@ describe("Parking lot", () => {
         expect(attendant.isLotFull).toBeFalsy();
     });
 
+    test("Attendant with multiple parking lots parks in one of them", () => {
+        const parkingLot1 = new ParkingLot(0, []);
+        const parkingLot2 = new ParkingLot(1,[]);
+        const attendant = new Attendant([parkingLot1, parkingLot2]);
+
+        const vehicle = new Vehicle();
+
+        attendant.park(vehicle);
+
+        expect(parkingLot2.isParked(vehicle)).toBeTruthy();
+    })
 });

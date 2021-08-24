@@ -1,3 +1,5 @@
+import {forEach} from "core-js/stable/dom-collections";
+
 class ParkingLot {
     parking = [];
     totalSlots;
@@ -84,19 +86,22 @@ class TrafficCop extends Subscriber {
 }
 
 class Attendant extends Subscriber{
-    parkingLot;
-
-    constructor(parkingLot) {
+    parkingLots;
+    constructor(parkingLots) {
         super();
-        this.parkingLot = parkingLot;
+        this.parkingLots = parkingLots;
     }
-
     park(vehicle) {
-        this.parkingLot.park(vehicle);
+        this.parkingLots.forEach( (parkingLot) => {
+            if (!parkingLot.isFull()){
+                parkingLot.park(vehicle);
+                return;
+            }
+        });
     }
 
     unpark(vehicle) {
-        this.parkingLot.unpark(vehicle);
+        this.parkingLots.unpark(vehicle);
     }
 }
 
