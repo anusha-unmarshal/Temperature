@@ -35,7 +35,7 @@ class ParkingLot {
         this.parking = this.parking.filter((item) => {
             return item !== vehicle;
         });
-        if (this.parking.length === this.totalSlots-1) {
+        if (this.parking.length === this.totalSlots - 1) {
             this.notify(false);
         }
         return true;
@@ -52,6 +52,10 @@ class ParkingLot {
 
     isFull() {
         return this.parking.length === this.totalSlots;
+    }
+
+    addSubscriber(subscriber) {
+        this.subscribers.push(subscriber);
     }
 }
 
@@ -79,11 +83,14 @@ class TrafficCop extends Subscriber {
 
 }
 
-class Attendant {
+class Attendant extends Subscriber{
     parkingLot;
+
     constructor(parkingLot) {
+        super();
         this.parkingLot = parkingLot;
     }
+
     park(vehicle) {
         this.parkingLot.park(vehicle);
     }
@@ -92,4 +99,5 @@ class Attendant {
         this.parkingLot.unpark(vehicle);
     }
 }
+
 export {ParkingLot, Owner, TrafficCop, Attendant};

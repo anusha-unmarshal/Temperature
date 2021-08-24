@@ -124,4 +124,28 @@ describe("Parking lot", () => {
 
         expect(parkingLot.isParked(vehicle)).toBeFalsy();
     });
+
+    test("Notify the attendant when lot is full", () => {
+        const parkingLot = new ParkingLot(1, []);
+        const attendant = new Attendant(parkingLot);
+        parkingLot.addSubscriber(attendant);
+        const vehicle = new Vehicle();
+
+        parkingLot.park(vehicle);
+
+        expect(attendant.isLotFull).toBeTruthy();
+    });
+
+    test("Notify attendant when parking slot is available", () => {
+        const parkingLot = new ParkingLot(1, []);
+        const attendant = new Attendant(parkingLot);
+        parkingLot.addSubscriber(attendant);
+        const vehicle = new Vehicle();
+
+        parkingLot.park(vehicle);
+        parkingLot.unpark(vehicle);
+
+        expect(attendant.isLotFull).toBeFalsy();
+    });
+
 });
