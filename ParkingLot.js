@@ -1,41 +1,49 @@
 class ParkingLot {
     parking = [];
-    availableSlots;
-    owner;
+    totalSlots;
+    subscribers;
 
-    constructor(availableSlots, owner) {
-        this.availableSlots = availableSlots;
-        this.owner = owner;
+    constructor(totalSlots, subscribers) {
+        this.totalSlots = totalSlots;
+        this.subscribers = subscribers;
     }
-    park(vehicle){
+
+    park(vehicle) {
         if (!this.isFull()) {
             this.parking.push(vehicle);
-            this.availableSlots -= 1;
         }
-        if (this.isFull()){
-           this.owner.isFull();
+        if (this.isFull()) {
+            this.notify(true)
+        }
+    }
+
+    notify(isFull) {
+        for (let i = 0; i < this.subscribers.length; i++) {
+            if (isFull === true) {
+                this.subscribers[i].isFull();
+                continue;
+            }
+            this.subscribers[i].isAvailable();
+
         }
     }
 
     unpark(vehicle) {
-        if (this.isParked(vehicle)) {
-            this.parking = this.parking.filter((item) => {
-                return item !== vehicle;
-            });
-            this.availableSlots += 1
-            if (this.availableSlots === 1){
-                this.owner.isAvailable()
-            }
-            return true;
-        }
-        else {
+        if (!this.isParked(vehicle)) {
             return false;
         }
+        this.parking = this.parking.filter((item) => {
+            return item !== vehicle;
+        });
+        if (this.parking.length === this.totalSlots-1) {
+            this.notify(false);
+        }
+        return true;
     }
 
     isParked(vehicle) {
-        for (let i=0; i<this.parking.length;i++){
-            if (this.parking[i] === vehicle){
+        for (let i = 0; i < this.parking.length; i++) {
+            if (this.parking[i] === vehicle) {
                 return true
             }
         }
@@ -43,17 +51,18 @@ class ParkingLot {
     }
 
     isFull() {
-       return this.availableSlots === 0;
+        return this.parking.length === this.totalSlots;
     }
 }
+
 export class Vehicle {
 
 }
 
-class Owner {
+class Subscriber {
     isLotFull = false;
 
-    isFull() {
+    isFull = () => {
         this.isLotFull = true;
     }
 
@@ -61,4 +70,16 @@ class Owner {
         this.isLotFull = false;
     }
 }
-export {ParkingLot, Owner};
+
+class Owner extends Subscriber {
+
+}
+
+class TrafficCop extends Subscriber {
+
+}
+
+class Attendant {
+
+}
+export {ParkingLot, Owner, TrafficCop, Attendant};
