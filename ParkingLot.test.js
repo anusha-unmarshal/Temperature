@@ -103,13 +103,25 @@ describe("Parking lot", () => {
     });
 
     test("Expect car to be parked by attendant", () => {
-        const attendant = new Attendant();
-        const owner = new Owner(attendant);
+        const owner = new Owner();
         const parkingLot = new ParkingLot(1, [owner]);
         const vehicle = new Vehicle();
+        const attendant = new Attendant(parkingLot);
 
-        parkingLot.park(vehicle);
+        attendant.park(vehicle);
 
         expect(parkingLot.isParked(vehicle)).toBeTruthy();
+    });
+
+    test("Expect car to be un-parked by attendant", () => {
+        const owner = new Owner();
+        const parkingLot = new ParkingLot(1, [owner]);
+        const vehicle = new Vehicle();
+        const attendant = new Attendant(parkingLot);
+
+        attendant.park(vehicle);
+        attendant.unpark(vehicle);
+
+        expect(parkingLot.isParked(vehicle)).toBeFalsy();
     });
 });

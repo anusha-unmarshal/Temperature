@@ -80,6 +80,16 @@ class TrafficCop extends Subscriber {
 }
 
 class Attendant {
+    parkingLot;
+    constructor(parkingLot) {
+        this.parkingLot = parkingLot;
+    }
+    park(vehicle) {
+        this.parkingLot.park(vehicle);
+    }
 
+    unpark(vehicle) {
+        this.parkingLot.unpark(vehicle);
+    }
 }
 export {ParkingLot, Owner, TrafficCop, Attendant};
