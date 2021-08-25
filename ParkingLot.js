@@ -1,5 +1,3 @@
-import {forEach} from "core-js/stable/dom-collections";
-
 class ParkingLot {
     parking = [];
     totalSlots;
@@ -41,6 +39,14 @@ class ParkingLot {
             this.notify(false);
         }
         return true;
+    }
+
+    getAvailableSlots() {
+        return this.totalSlots - this.parking.length;
+    }
+
+    getTotalSlots() {
+        return this.totalSlots;
     }
 
     isParked(vehicle) {
@@ -85,15 +91,51 @@ class TrafficCop extends Subscriber {
 
 }
 
+class Scheme {
+    findParkingLot() {
+
+    }
+}
+
+class Capacity extends Scheme {
+    findParkingLot(availableLots) {
+        let maxVal = 0;
+        let maxLot = null;
+        for (let i = 0; i < availableLots.length; i++) {
+            if (availableLots[i].getTotalSlots() > maxVal) {
+                maxLot = availableLots[i];
+                maxVal = availableLots[i].getTotalSlots();
+            }
+        }
+        return maxLot;
+    }
+}
+
+class Availability extends Scheme {
+    findParkingLot(availableLots) {
+        let maxVal = 0;
+        let maxLot = null;
+        for (let i = 0; i < availableLots.length; i++) {
+            if (availableLots[i].getAvailableSlots() > maxVal) {
+                maxLot = availableLots[i];
+                maxVal = availableLots[i].getAvailableSlots();
+            }
+        }
+        return maxLot;
+    }
+}
+
 class Attendant extends Subscriber {
     parkingLots;
     availableLots;
+    scheme;
 
-    constructor(parkingLots) {
+    constructor(parkingLots, scheme) {
         super();
         this.parkingLots = parkingLots;
         this.subscribeParkingLot();
         this.availableLots = this.getAvailableLots(parkingLots);
+        this.scheme = scheme;
     }
 
     isFull = (parkingLot) => {
@@ -109,17 +151,16 @@ class Attendant extends Subscriber {
     }
 
     park(vehicle) {
-        if (this.availableLots.length === 0){
+        if (this.availableLots.length === 0) {
             return false;
         }
-        // const lot = this.getHighestCapacityLot();
-        const lot = this.availableLots[0];
+        let lot = this.scheme.findParkingLot(this.availableLots);
         lot.park(vehicle);
     }
 
     unpark(vehicle) {
-        for(let i=0; i<this.parkingLots.length; i++){
-            if (this.parkingLots[i].isParked(vehicle)){
+        for (let i = 0; i < this.parkingLots.length; i++) {
+            if (this.parkingLots[i].isParked(vehicle)) {
                 return this.parkingLots[i].unpark(vehicle);
             }
         }
@@ -129,15 +170,14 @@ class Attendant extends Subscriber {
     getAvailableLots(parkingLots) {
         return parkingLots.filter((parkingLot) => {
             return parkingLot.isFull() !== true;
-        })
+        });
     }
 
     subscribeParkingLot() {
-        for(let i=0; i<this.parkingLots.length; i++){
+        for (let i = 0; i < this.parkingLots.length; i++) {
             this.parkingLots[i].addSubscriber(this);
         }
     }
-
 }
 
-export {ParkingLot, Owner, TrafficCop, Attendant};
+export {ParkingLot, Owner, TrafficCop, Attendant, Capacity, Availability};

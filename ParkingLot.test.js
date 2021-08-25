@@ -1,4 +1,4 @@
-const {Vehicle, ParkingLot, Owner, TrafficCop, Attendant} = require("./ParkingLot")
+const {Vehicle, ParkingLot, Owner, TrafficCop, Attendant, Availability, Capacity} = require("./ParkingLot")
 
 describe("Parking lot", () => {
 
@@ -148,7 +148,7 @@ describe("Parking lot", () => {
 
     test("Attendant with multiple parking lots parks in one of them", () => {
         const parkingLot1 = new ParkingLot(0, []);
-        const parkingLot2 = new ParkingLot(1,[]);
+        const parkingLot2 = new ParkingLot(1, []);
         const attendant = new Attendant([parkingLot1, parkingLot2]);
 
         const vehicle = new Vehicle();
@@ -160,13 +160,54 @@ describe("Parking lot", () => {
 
     test("Park vehicle in lot with highest available space", () => {
         const parkingLot1 = new ParkingLot(0, []);
-        const parkingLot2 = new ParkingLot(3,[]);
+        const parkingLot2 = new ParkingLot(3, []);
         const attendant = new Attendant([parkingLot1, parkingLot2]);
 
         const vehicle = new Vehicle();
 
         attendant.park(vehicle);
 
-        expect(parkingLot1.isParked(vehicle)).toBeTruthy();
+        expect(parkingLot2.isParked(vehicle)).toBeTruthy();
+    });
+
+    test("Park vehicle in lot which has most capacity and is available", () => {
+        const parkingLot1 = new ParkingLot(1, []);
+        const parkingLot2 = new ParkingLot(2, []);
+        const attendant = new Attendant([parkingLot1, parkingLot2]);
+
+        const vehicle1 = new Vehicle();
+        parkingLot2.park(vehicle1);
+        const vehicle2 = new Vehicle();
+        attendant.park(vehicle2);
+
+        expect(parkingLot2.isParked(vehicle2)).toBeTruthy();
+    });
+
+    test("expect attendant to park based on availability scheme", () => {
+        const parkingLot1 = new ParkingLot(1, []);
+        const parkingLot2 = new ParkingLot(2, []);
+        const scheme = new Availability();
+        const attendant = new Attendant([parkingLot1, parkingLot2], scheme);
+
+        const vehicle1 = new Vehicle();
+        parkingLot2.park(vehicle1);
+        const vehicle2 = new Vehicle();
+        attendant.park(vehicle2);
+
+        expect(parkingLot1.isParked(vehicle2)).toBeTruthy();
+    });
+
+    test("expect attendant to park based on capacity scheme", () => {
+        const parkingLot1 = new ParkingLot(1, []);
+        const parkingLot2 = new ParkingLot(2, []);
+        const scheme = new Capacity();
+        const attendant = new Attendant([parkingLot1, parkingLot2], scheme);
+
+        const vehicle1 = new Vehicle();
+        parkingLot2.park(vehicle1);
+        const vehicle2 = new Vehicle();
+        attendant.park(vehicle2);
+
+        expect(parkingLot2.isParked(vehicle2)).toBeTruthy();
     });
 });
