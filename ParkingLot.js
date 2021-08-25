@@ -15,17 +15,17 @@ class ParkingLot {
             this.parking.push(vehicle);
         }
         if (this.isFull()) {
-            this.notify(true)
+            this.notify(true);
         }
     }
 
     notify(isFull) {
         for (let i = 0; i < this.subscribers.length; i++) {
             if (isFull === true) {
-                this.subscribers[i].isFull();
+                this.subscribers[i].isFull(this);
                 continue;
             }
-            this.subscribers[i].isAvailable();
+            this.subscribers[i].isAvailable(this);
 
         }
     }
@@ -85,24 +85,59 @@ class TrafficCop extends Subscriber {
 
 }
 
-class Attendant extends Subscriber{
+class Attendant extends Subscriber {
     parkingLots;
+    availableLots;
+
     constructor(parkingLots) {
         super();
         this.parkingLots = parkingLots;
+        this.subscribeParkingLot();
+        this.availableLots = this.getAvailableLots(parkingLots);
     }
-    park(vehicle) {
-        this.parkingLots.forEach( (parkingLot) => {
-            if (!parkingLot.isFull()){
-                parkingLot.park(vehicle);
-                return;
-            }
+
+    isFull = (parkingLot) => {
+        this.isLotFull = true;
+        this.availableLots = this.availableLots.filter((lot) => {
+            return lot !== parkingLot;
         });
     }
 
-    unpark(vehicle) {
-        this.parkingLots.unpark(vehicle);
+    isAvailable(parkingLot) {
+        this.isLotFull = false;
+        this.availableLots.push(parkingLot);
     }
+
+    park(vehicle) {
+        if (this.availableLots.length === 0){
+            return false;
+        }
+        // const lot = this.getHighestCapacityLot();
+        const lot = this.availableLots[0];
+        lot.park(vehicle);
+    }
+
+    unpark(vehicle) {
+        for(let i=0; i<this.parkingLots.length; i++){
+            if (this.parkingLots[i].isParked(vehicle)){
+                return this.parkingLots[i].unpark(vehicle);
+            }
+        }
+        return false;
+    }
+
+    getAvailableLots(parkingLots) {
+        return parkingLots.filter((parkingLot) => {
+            return parkingLot.isFull() !== true;
+        })
+    }
+
+    subscribeParkingLot() {
+        for(let i=0; i<this.parkingLots.length; i++){
+            this.parkingLots[i].addSubscriber(this);
+        }
+    }
+
 }
 
 export {ParkingLot, Owner, TrafficCop, Attendant};

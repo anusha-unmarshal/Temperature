@@ -106,7 +106,7 @@ describe("Parking lot", () => {
         const owner = new Owner();
         const parkingLot = new ParkingLot(1, [owner]);
         const vehicle = new Vehicle();
-        const attendant = new Attendant(parkingLot);
+        const attendant = new Attendant([parkingLot]);
 
         attendant.park(vehicle);
 
@@ -117,7 +117,7 @@ describe("Parking lot", () => {
         const owner = new Owner();
         const parkingLot = new ParkingLot(1, [owner]);
         const vehicle = new Vehicle();
-        const attendant = new Attendant(parkingLot);
+        const attendant = new Attendant([parkingLot]);
 
         attendant.park(vehicle);
         attendant.unpark(vehicle);
@@ -127,7 +127,7 @@ describe("Parking lot", () => {
 
     test("Notify the attendant when lot is full", () => {
         const parkingLot = new ParkingLot(1, []);
-        const attendant = new Attendant(parkingLot);
+        const attendant = new Attendant([parkingLot]);
         const vehicle = new Vehicle();
 
         parkingLot.park(vehicle);
@@ -137,7 +137,7 @@ describe("Parking lot", () => {
 
     test("Notify attendant when parking slot is available", () => {
         const parkingLot = new ParkingLot(1, []);
-        const attendant = new Attendant(parkingLot);
+        const attendant = new Attendant([parkingLot]);
         const vehicle = new Vehicle();
 
         parkingLot.park(vehicle);
@@ -156,5 +156,17 @@ describe("Parking lot", () => {
         attendant.park(vehicle);
 
         expect(parkingLot2.isParked(vehicle)).toBeTruthy();
-    })
+    });
+
+    test("Park vehicle in lot with highest available space", () => {
+        const parkingLot1 = new ParkingLot(0, []);
+        const parkingLot2 = new ParkingLot(3,[]);
+        const attendant = new Attendant([parkingLot1, parkingLot2]);
+
+        const vehicle = new Vehicle();
+
+        attendant.park(vehicle);
+
+        expect(parkingLot1.isParked(vehicle)).toBeTruthy();
+    });
 });
