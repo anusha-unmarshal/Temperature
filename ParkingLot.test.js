@@ -106,7 +106,8 @@ describe("Parking lot", () => {
         const owner = new Owner();
         const parkingLot = new ParkingLot(1, [owner]);
         const vehicle = new Vehicle();
-        const attendant = new Attendant([parkingLot]);
+        const scheme = new Availability();
+        const attendant = new Attendant([parkingLot], scheme);
 
         attendant.park(vehicle);
 
@@ -117,7 +118,8 @@ describe("Parking lot", () => {
         const owner = new Owner();
         const parkingLot = new ParkingLot(1, [owner]);
         const vehicle = new Vehicle();
-        const attendant = new Attendant([parkingLot]);
+        const scheme = new Availability();
+        const attendant = new Attendant([parkingLot], scheme);
 
         attendant.park(vehicle);
         attendant.unpark(vehicle);
@@ -127,7 +129,8 @@ describe("Parking lot", () => {
 
     test("Notify the attendant when lot is full", () => {
         const parkingLot = new ParkingLot(1, []);
-        const attendant = new Attendant([parkingLot]);
+        const scheme = new Availability();
+        const attendant = new Attendant([parkingLot], scheme);
         const vehicle = new Vehicle();
 
         parkingLot.park(vehicle);
@@ -137,7 +140,8 @@ describe("Parking lot", () => {
 
     test("Notify attendant when parking slot is available", () => {
         const parkingLot = new ParkingLot(1, []);
-        const attendant = new Attendant([parkingLot]);
+        const scheme = new Availability();
+        const attendant = new Attendant([parkingLot], scheme);
         const vehicle = new Vehicle();
 
         parkingLot.park(vehicle);
@@ -149,7 +153,8 @@ describe("Parking lot", () => {
     test("Attendant with multiple parking lots parks in one of them", () => {
         const parkingLot1 = new ParkingLot(0, []);
         const parkingLot2 = new ParkingLot(1, []);
-        const attendant = new Attendant([parkingLot1, parkingLot2]);
+        const scheme = new Availability();
+        const attendant = new Attendant([parkingLot1, parkingLot2], scheme);
 
         const vehicle = new Vehicle();
 
@@ -161,7 +166,8 @@ describe("Parking lot", () => {
     test("Park vehicle in lot with highest available space", () => {
         const parkingLot1 = new ParkingLot(0, []);
         const parkingLot2 = new ParkingLot(3, []);
-        const attendant = new Attendant([parkingLot1, parkingLot2]);
+        const scheme = new Availability();
+        const attendant = new Attendant([parkingLot1, parkingLot2], scheme);
 
         const vehicle = new Vehicle();
 
@@ -173,7 +179,8 @@ describe("Parking lot", () => {
     test("Park vehicle in lot which has most capacity and is available", () => {
         const parkingLot1 = new ParkingLot(1, []);
         const parkingLot2 = new ParkingLot(2, []);
-        const attendant = new Attendant([parkingLot1, parkingLot2]);
+        const scheme = new Capacity();
+        const attendant = new Attendant([parkingLot1, parkingLot2], scheme);
 
         const vehicle1 = new Vehicle();
         parkingLot2.park(vehicle1);
